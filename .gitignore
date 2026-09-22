@@ -40,7 +40,14 @@ venv.bak/
 *-checkpoint.ipynb
 
 # Machine Learning & Model weights / checkpoints (>50MB+)
-# Uncomment if you prefer storing models in Git LFS, cloud storage, or Google Drive
+models/
+**/models/
+test_modles/
+**/test_modles/
+test_models/
+**/test_models/
+test-models/
+**/test-models/
 *.h5
 *.hdf5
 *.keras
