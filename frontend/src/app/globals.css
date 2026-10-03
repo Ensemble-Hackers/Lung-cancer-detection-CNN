@@ -2214,85 +2214,103 @@ a {
   margin-top: 2px;
 }
 
-/* Vertical Probability Distribution Bar Chart */
+/* Vertical Probability Distribution Bar Chart with Precision Leveling */
 .distribution-chart-wrapper {
   position: relative;
-  height: 220px;
-  padding-top: 10px;
-}
-
-.chart-y-axis-grid {
-  position: absolute;
-  top: 0;
-  left: 0;
   width: 100%;
-  height: 170px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  pointer-events: none;
+  padding-top: 6px;
+  padding-bottom: 4px;
 }
 
-.chart-grid-line-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  width: 100%;
-}
-
-.grid-y-label {
-  width: 32px;
-  font-family: var(--font-mono);
-  font-size: 10.5px;
-  color: #64748b;
-  text-align: right;
-  flex-shrink: 0;
-}
-
-.grid-dash-rule {
-  flex: 1;
-  border-bottom: 1px dashed #eef2f6;
-  height: 1px;
-}
-
-.chart-vertical-bars {
-  position: relative;
-  margin-left: 40px;
-  height: 170px;
+/* 1. Aligned Top Percentage Values Row */
+.chart-top-values-row {
+  margin-left: 38px;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  align-items: end;
-  gap: 12px;
-  z-index: 2;
-}
-
-.chart-bar-column {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  height: 100%;
-  justify-content: flex-end;
+  gap: 8px;
+  margin-bottom: 8px;
 }
 
 .bar-top-value {
   font-size: 12px;
   font-weight: 700;
   color: #0f172a;
-  margin-bottom: 6px;
+  text-align: center;
+  display: block;
 }
 
-.bar-track-area {
-  width: 28px;
-  height: 130px;
+.bar-top-value.is-primary-val {
+  color: #1d72fe;
+}
+
+/* 2. Precision Plot Area */
+.chart-plot-area {
+  position: relative;
+  height: 140px;
+  width: 100%;
+  overflow: visible;
+}
+
+.chart-y-axis-grid {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+}
+
+.chart-grid-level {
+  position: absolute;
+  left: 0;
+  right: 0;
   display: flex;
-  align-items: flex-end;
+  align-items: center;
+  gap: 8px;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.grid-y-label {
+  width: 30px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: #64748b;
+  text-align: right;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.grid-dash-rule {
+  flex: 1;
+  border-bottom: 1px dashed #e2e8f0;
+  height: 0px;
+}
+
+.chart-bars-track-layer {
+  position: absolute;
+  top: 0;
+  left: 38px;
+  right: 0;
+  bottom: 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  z-index: 2;
+}
+
+.chart-bar-pillar-wrap {
+  display: flex;
   justify-content: center;
+  align-items: flex-end;
+  height: 100%;
 }
 
 .bar-fill-pillar {
-  width: 100%;
+  width: 28px;
   border-radius: 4px 4px 0 0;
   transition: height 360ms cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 1px 3px rgba(29, 114, 254, 0.08);
 }
 
 .pillar-primary {
@@ -2303,14 +2321,30 @@ a {
   background: #93c5fd;
 }
 
+/* 3. Aligned Bottom Category Labels Row */
+.chart-bottom-labels-row {
+  margin-left: 38px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-top: 10px;
+  align-items: flex-start;
+}
+
 .bar-bottom-label {
   font-size: 11px;
   color: #475569;
   text-align: center;
-  margin-top: 10px;
-  line-height: 1.2;
-  max-width: 76px;
+  line-height: 1.25;
   font-weight: 500;
+  display: block;
+  overflow-wrap: break-word;
+  word-break: normal;
+}
+
+.bar-bottom-label.is-primary-label {
+  color: #0f172a;
+  font-weight: 700;
 }
 
 .spin-icon {

@@ -657,33 +657,65 @@ export const DiagnosticStudio: React.FC<DiagnosticStudioProps> = ({
               </div>
             </div>
 
-            {/* Vertical Bar Chart matching reference */}
+            {/* Vertical Bar Chart with Precision Leveling */}
             <div className="distribution-chart-wrapper">
-              {/* Y Axis Grid lines and labels */}
-              <div className="chart-y-axis-grid">
-                {["100%", "75%", "50%", "25%", "0%"].map((label) => (
-                  <div key={label} className="chart-grid-line-row">
-                    <span className="grid-y-label">{label}</span>
-                    <div className="grid-dash-rule" />
-                  </div>
+              {/* 1. Aligned Top Percentage Values Row */}
+              <div className="chart-top-values-row">
+                {chartBars.map((bar) => (
+                  <span 
+                    key={bar.key} 
+                    className={`bar-top-value ${bar.isPrimary ? "is-primary-val" : ""}`}
+                  >
+                    {bar.value.toFixed(1)}%
+                  </span>
                 ))}
               </div>
 
-              {/* 4 Vertical Bars Stack */}
-              <div className="chart-vertical-bars">
-                {chartBars.map((bar) => (
-                  <div key={bar.key} className="chart-bar-column">
-                    <span className="bar-top-value">{bar.value.toFixed(1)}%</span>
-                    
-                    <div className="bar-track-area">
+              {/* 2. Precision Plot Area (Grid + Synchronized Bars) */}
+              <div className="chart-plot-area">
+                {/* Mathematical Y Axis Grid (0% to 100%) */}
+                <div className="chart-y-axis-grid">
+                  {[
+                    { label: "100%", percent: 100 },
+                    { label: "75%", percent: 75 },
+                    { label: "50%", percent: 50 },
+                    { label: "25%", percent: 25 },
+                    { label: "0%", percent: 0 }
+                  ].map((level) => (
+                    <div 
+                      key={level.label} 
+                      className="chart-grid-level" 
+                      style={{ top: `${100 - level.percent}%` }}
+                    >
+                      <span className="grid-y-label">{level.label}</span>
+                      <div className="grid-dash-rule" />
+                    </div>
+                  ))}
+                </div>
+
+                {/* 4 Synchronized Vertical Bars - strictly anchored at 0% baseline */}
+                <div className="chart-bars-track-layer">
+                  {chartBars.map((bar) => (
+                    <div key={bar.key} className="chart-bar-pillar-wrap">
                       <div 
                         className={`bar-fill-pillar ${bar.isPrimary ? "pillar-primary" : "pillar-secondary"}`}
-                        style={{ height: `${Math.max(3, bar.value)}%` }}
+                        style={{ height: `${Math.max(2, Math.min(100, bar.value))}%` }}
+                        title={`${bar.displayName}: ${bar.value.toFixed(1)}%`}
                       />
                     </div>
+                  ))}
+                </div>
+              </div>
 
-                    <span className="bar-bottom-label">{bar.displayName}</span>
-                  </div>
+              {/* 3. Aligned Bottom Category Labels Row */}
+              <div className="chart-bottom-labels-row">
+                {chartBars.map((bar) => (
+                  <span 
+                    key={bar.key} 
+                    className={`bar-bottom-label ${bar.isPrimary ? "is-primary-label" : ""}`}
+                  >
+                    {bar.displayName}
+                  </span>
                 ))}
               </div>
             </div>
