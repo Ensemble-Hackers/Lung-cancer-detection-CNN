@@ -12,14 +12,15 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Missing image data" }, { status: 400 });
     }
 
-    // Attempt python inference backend first
+    // Attempt python inference backend first (Tri-Ensemble on port 8001)
+    const pythonBase = process.env.PYTHON_API_URL || "http://127.0.0.1:8001";
     try {
       const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 6000);
-      const res = await fetch("http://127.0.0.1:8000/api/predict", {
+      const timeout = setTimeout(() => controller.abort(), 30000);
+      const res = await fetch(`${pythonBase}/api/predict`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ image_data: imageData }),
+        body: JSON.stringify({ image_data: imageData, sample_id: sampleId }),
         signal: controller.signal
       });
       clearTimeout(timeout);
@@ -27,9 +28,11 @@ export async function POST(req: NextRequest) {
       if (res.ok) {
         const data = await res.json();
         return NextResponse.json({ ...data, source: "python_backend" });
+      } else {
+        console.warn(`[Predict Route] Python backend returned status ${res.status}`);
       }
-    } catch {
-      // Fall through to serverless analytical engine
+    } catch (fetchErr) {
+      console.warn("[Predict Route] Python backend unreachable or timed out, falling back to analytical engine:", fetchErr);
     }
 
     // Server-side analytical prediction engine

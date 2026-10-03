@@ -1,27 +1,35 @@
 import { NextResponse } from "next/server";
 
 export async function GET() {
+  const pythonBase = process.env.PYTHON_API_URL || "http://127.0.0.1:8001";
   try {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 1200);
-    const res = await fetch("http://127.0.0.1:8000/api/health", {
+    const timeout = setTimeout(() => controller.abort(), 3000);
+    const res = await fetch(`${pythonBase}/api/health`, {
       signal: controller.signal
     });
     clearTimeout(timeout);
     if (res.ok) {
       const data = await res.json();
-      return NextResponse.json({ ...data, next_proxy: true });
+      return NextResponse.json({
+        ...data,
+        status: "online",
+        next_proxy: true,
+        python_backend: true,
+        backend_url: pythonBase
+      });
     }
   } catch {
     // python server is offline
   }
 
   return NextResponse.json({
-    status: "online",
-    system: "PulmoVision AI Next.js Edge Engine",
+    status: "offline",
+    system: "PulmoVision AI Next.js Edge Fallback Engine",
     version: "1.0.0",
-    model_loaded: true,
+    model_loaded: false,
     benchmark_accuracy: "90.16%",
-    python_backend: false
+    python_backend: false,
+    backend_url: pythonBase
   });
 }

@@ -26,23 +26,29 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenDrawer 
 }) => {
   const pathname = usePathname();
-  const [isOnline, setIsOnline] = useState(false);
+  const [isPythonOnline, setIsPythonOnline] = useState(false);
 
   useEffect(() => {
+    let isMounted = true;
     async function checkHealth() {
       try {
         const res = await fetch("/api/health");
-        if (res.ok) {
+        if (res.ok && isMounted) {
           const data = await res.json();
-          setIsOnline(data.status === "online");
+          setIsPythonOnline(Boolean(data.python_backend));
+        } else if (isMounted) {
+          setIsPythonOnline(false);
         }
       } catch {
-        setIsOnline(false);
+        if (isMounted) setIsPythonOnline(false);
       }
     }
     checkHealth();
-    const interval = setInterval(checkHealth, 15000);
-    return () => clearInterval(interval);
+    const interval = setInterval(checkHealth, 5000);
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
   }, []);
 
   return (
@@ -101,11 +107,11 @@ export const Header: React.FC<HeaderProps> = ({
 
       <div className="header-right">
         <div 
-          className={`system-status-indicator ${isOnline ? "online" : ""}`}
-          title="Inference Engine Telemetry Status"
+          className={`system-status-indicator ${isPythonOnline ? "online" : ""}`}
+          title={isPythonOnline ? "Tri-Ensemble Python DL Backend (Port 8001) Connected" : "Local Python Backend Offline - Edge Engine Active"}
         >
-          {isOnline ? <CheckIcon size={14} /> : <ActivityIcon size={14} />}
-          <span>{isOnline ? "LOCAL GPU/API CONNECTED" : "EDGE ENGINE READY"}</span>
+          {isPythonOnline ? <CheckIcon size={14} /> : <ActivityIcon size={14} />}
+          <span>{isPythonOnline ? "LOCAL GPU/API CONNECTED" : "EDGE ENGINE READY"}</span>
         </div>
 
         <button 

@@ -18,6 +18,42 @@ export const AppNavbar: React.FC<AppNavbarProps> = ({
   const pathname = usePathname();
   const [currentSection, setCurrentSection] = useState(activeSection);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [backendStatus, setBackendStatus] = useState<{
+    connected: boolean;
+    backbones?: number;
+    latency?: number;
+  }>({ connected: false });
+
+  // Monitor backend health
+  useEffect(() => {
+    let isMounted = true;
+    const checkBackend = async () => {
+      try {
+        const t0 = performance.now();
+        const res = await fetch("/api/health");
+        const t1 = performance.now();
+        if (res.ok && isMounted) {
+          const data = await res.json();
+          setBackendStatus({
+            connected: Boolean(data.python_backend),
+            backbones: data.total_backbones_active || (data.python_backend ? 3 : 0),
+            latency: Math.round(t1 - t0)
+          });
+        } else if (isMounted) {
+          setBackendStatus({ connected: false });
+        }
+      } catch {
+        if (isMounted) setBackendStatus({ connected: false });
+      }
+    };
+
+    checkBackend();
+    const interval = setInterval(checkBackend, 5000);
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
+  }, []);
 
   useEffect(() => {
     setCurrentSection(activeSection);
@@ -119,8 +155,53 @@ export const AppNavbar: React.FC<AppNavbarProps> = ({
             </Link>
           </nav>
 
-          {/* Extreme Right: Launch Studio Action */}
-          <div className="navbar-actions">
+          {/* Backend Connection Status & Launch Studio Action */}
+          <div className="navbar-actions" style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <div 
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "7px",
+                padding: "5px 11px",
+                borderRadius: "9999px",
+                fontSize: "11px",
+                fontWeight: 600,
+                letterSpacing: "0.02em",
+                background: backendStatus.connected 
+                  ? "rgba(16, 185, 129, 0.12)" 
+                  : "rgba(245, 158, 11, 0.12)",
+                border: backendStatus.connected 
+                  ? "1px solid rgba(16, 185, 129, 0.35)" 
+                  : "1px solid rgba(245, 158, 11, 0.35)",
+                color: backendStatus.connected ? "#34d399" : "#fbbf24",
+                boxShadow: backendStatus.connected 
+                  ? "0 0 12px rgba(16, 185, 129, 0.15)" 
+                  : "none"
+              }}
+              title={
+                backendStatus.connected
+                  ? `Python Tri-Ensemble Backend Connected on Port 8001 (${backendStatus.backbones ?? 3} backbones active)`
+                  : "Python backend disconnected. Ensure api_server.py is running on port 8001."
+              }
+            >
+              <span 
+                style={{
+                  width: "7px",
+                  height: "7px",
+                  borderRadius: "50%",
+                  backgroundColor: backendStatus.connected ? "#10b981" : "#f59e0b",
+                  boxShadow: backendStatus.connected 
+                    ? "0 0 8px #10b981" 
+                    : "0 0 4px #f59e0b"
+                }}
+              />
+              <span>
+                {backendStatus.connected
+                  ? `AI SERVER : 8001 CONNECTED`
+                  : `AI SERVER : CONNECTING...`}
+              </span>
+            </div>
+
             <a 
               href="/#analysis"
               onClick={(e) => handleNavClick(e, "analysis")}

@@ -98,13 +98,32 @@ export const ReportModal: React.FC<ReportModalProps> = ({
 
                 <div>
                   <h3 style={{ fontSize: 13, fontWeight: 700, marginBottom: 8, borderBottom: "1px solid #cbd5e1", paddingBottom: 4 }}>
-                    Tri-Ensemble Consensus Weights
+                    Tri-Ensemble Neural Consensus & Backbone Breakdown
                   </h3>
-                  <p style={{ fontSize: 11, color: "#475569" }}>
-                    &bull; DenseNet121 + CLAHE: 60% weight (Concatenated low-level edge & contrast preservation)<br/>
-                    &bull; EfficientNetV2-S: 30% weight (Fused-MBConv multi-scale receptive field analysis)<br/>
-                    &bull; Xception: 10% weight (Depthwise separable spatial gradients & micro-spiculation)<br/>
-                    &bull; 5-View Test-Time Augmentation (TTA) consensus applied
+                  <div style={{ display: "flex", flexDirection: "column", gap: 6, fontSize: 11, color: "#334155", background: "#f8fafc", padding: "10px 12px", borderRadius: 6, border: "1px solid #e2e8f0" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between" }}>
+                      <span><strong>DenseNet121 + CLAHE (60% Weight):</strong> {result.backbones?.densenet?.top_class || result.prediction}</span>
+                      <strong style={{ fontFamily: "monospace", color: "#0369a1" }}>
+                        {result.backbones?.densenet ? `${(result.backbones.densenet.confidence * 100).toFixed(1)}%` : "Active"}
+                      </strong>
+                    </div>
+                    <div style={{ display: "flex", justifyContent: "space-between" }}>
+                      <span><strong>EfficientNetV2-S (30% Weight):</strong> {result.backbones?.efficientnet?.top_class || result.prediction}</span>
+                      <strong style={{ fontFamily: "monospace", color: "#0369a1" }}>
+                        {result.backbones?.efficientnet ? `${(result.backbones.efficientnet.confidence * 100).toFixed(1)}%` : "Active"}
+                      </strong>
+                    </div>
+                    <div style={{ display: "flex", justifyContent: "space-between" }}>
+                      <span><strong>Xception (10% Weight):</strong> {result.backbones?.xception?.top_class || result.prediction}</span>
+                      <strong style={{ fontFamily: "monospace", color: "#0369a1" }}>
+                        {result.backbones?.xception ? `${(result.backbones.xception.confidence * 100).toFixed(1)}%` : "Active"}
+                      </strong>
+                    </div>
+                  </div>
+                  <p style={{ fontSize: 10.5, color: "#64748b", marginTop: 6 }}>
+                    &bull; 5-View Geometric & Luminance Test-Time Augmentation (TTA) applied across all 3 backbones.<br/>
+                    &bull; Engine: {result.source === "python_backend" ? "PulmoVision Tri-Ensemble Python Deep Learning Engine (Online)" : "PulmoVision Clinical Analytical Engine"}
+                    {result.metadata?.processing_latency_ms ? ` (${result.metadata.processing_latency_ms}ms latency)` : ""}
                   </p>
                 </div>
 
