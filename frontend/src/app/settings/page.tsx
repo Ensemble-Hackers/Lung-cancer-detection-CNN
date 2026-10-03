@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import { Header } from "@/components/Header";
-import { NavigationDrawer } from "@/components/NavigationDrawer";
 import { SettingsIcon, CheckIcon, ShieldCheckIcon, UserIcon, SlidersIcon } from "@/components/Icons";
 import { ClinicianUser } from "@/types/medical";
 
@@ -17,7 +16,6 @@ export default function SettingsPage() {
   });
 
   const [saved, setSaved] = useState(false);
-  const [drawerOpen, setDrawerOpen] = useState(false);
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,7 +28,6 @@ export default function SettingsPage() {
       <Header 
         user={user} 
         onOpenAuth={() => {}} 
-        onOpenDrawer={() => setDrawerOpen(true)}
       />
 
       <main className="page-wrapper">
@@ -127,11 +124,6 @@ export default function SettingsPage() {
           </div>
         </div>
       </main>
-
-      <NavigationDrawer 
-        isOpen={drawerOpen} 
-        onClose={() => setDrawerOpen(false)} 
-      />
     </>
   );
 }

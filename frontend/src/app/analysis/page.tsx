@@ -5,7 +5,6 @@ import { Header } from "@/components/Header";
 import { DiagnosticStudio } from "@/components/DiagnosticStudio";
 import { ReportModal } from "@/components/ReportModal";
 import { AuthModal } from "@/components/AuthModal";
-import { NavigationDrawer } from "@/components/NavigationDrawer";
 import { PredictionResult, ActiveScan, ClinicianUser } from "@/types/medical";
 import { SAMPLE_SCANS } from "@/lib/constants";
 
@@ -30,14 +29,12 @@ export default function AnalysisPage() {
   const [result, setResult] = useState<PredictionResult | null>(null);
   const [reportOpen, setReportOpen] = useState(false);
   const [authOpen, setAuthOpen] = useState(false);
-  const [drawerOpen, setDrawerOpen] = useState(false);
 
   return (
     <>
       <Header 
         user={user} 
         onOpenAuth={() => setAuthOpen(true)} 
-        onOpenDrawer={() => setDrawerOpen(true)}
       />
 
       <main className="workstation-section">
@@ -54,11 +51,6 @@ export default function AnalysisPage() {
           setActiveScan={setActiveScan}
         />
       </main>
-
-      <NavigationDrawer 
-        isOpen={drawerOpen} 
-        onClose={() => setDrawerOpen(false)} 
-      />
 
       <ReportModal 
         isOpen={reportOpen} 

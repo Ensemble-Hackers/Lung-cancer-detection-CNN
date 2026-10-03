@@ -3,9 +3,6 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { MenuIcon } from "@/components/Icons";
-import { NavigationDrawer } from "@/components/NavigationDrawer";
-
 interface AppNavbarProps {
   activeSection?: string;
   onSelectSection?: (sectionId: string) => void;
@@ -17,7 +14,6 @@ export const AppNavbar: React.FC<AppNavbarProps> = ({
 }) => {
   const pathname = usePathname();
   const [currentSection, setCurrentSection] = useState(activeSection);
-  const [drawerOpen, setDrawerOpen] = useState(false);
 
   useEffect(() => {
     setCurrentSection(activeSection);
@@ -28,7 +24,7 @@ export const AppNavbar: React.FC<AppNavbarProps> = ({
     if (pathname !== "/") return;
 
     const handleScroll = () => {
-      const sections = ["overview", "analysis", "benchmark"];
+      const sections = ["overview", "analysis", "benchmarks", "benchmark"];
       const scrollPos = window.scrollY + 200;
 
       for (const sectionId of sections) {
@@ -37,7 +33,7 @@ export const AppNavbar: React.FC<AppNavbarProps> = ({
           const top = el.offsetTop;
           const height = el.offsetHeight;
           if (scrollPos >= top && scrollPos < top + height) {
-            setCurrentSection(sectionId);
+            setCurrentSection(sectionId === "benchmark" ? "benchmarks" : sectionId);
             break;
           }
         }
@@ -55,7 +51,7 @@ export const AppNavbar: React.FC<AppNavbarProps> = ({
       if (onSelectSection) {
         onSelectSection(sectionId);
       } else {
-        const el = document.getElementById(sectionId);
+        const el = document.getElementById(sectionId) || (sectionId === "benchmarks" ? document.getElementById("benchmark") : null);
         if (el) {
           el.scrollIntoView({ behavior: "smooth", block: "start" });
         }
@@ -67,17 +63,8 @@ export const AppNavbar: React.FC<AppNavbarProps> = ({
     <>
       <header className="site-navbar">
         <div className="navbar-container">
-          {/* Left: Hamburger Button + Brand Pill */}
+          {/* Left: Brand Pill */}
           <div className="navbar-left-group">
-            <button 
-              type="button"
-              className="navbar-hamburger-btn"
-              onClick={() => setDrawerOpen(true)}
-              aria-label="Open Navigation Drawer"
-            >
-              <MenuIcon size={18} />
-            </button>
-
             <Link 
               href="/#overview" 
               onClick={(e) => handleNavClick(e, "overview")}
@@ -95,7 +82,7 @@ export const AppNavbar: React.FC<AppNavbarProps> = ({
             </Link>
           </div>
 
-          {/* Center Navigation Links: Overview, Analysis, Settings */}
+          {/* Center Navigation Links: Overview, Analysis, Benchmarks */}
           <nav className="navbar-links">
             <Link
               href="/#overview"
@@ -112,10 +99,11 @@ export const AppNavbar: React.FC<AppNavbarProps> = ({
               Analysis
             </Link>
             <Link
-              href="/settings"
-              className={`navbar-link ${pathname === "/settings" ? "active" : ""}`}
+              href="/#benchmarks"
+              onClick={(e) => handleNavClick(e, "benchmarks")}
+              className={`navbar-link ${pathname === "/" && (currentSection === "benchmarks" || currentSection === "benchmark") ? "active" : ""}`}
             >
-              Settings
+              Benchmarks
             </Link>
           </nav>
 
@@ -135,12 +123,6 @@ export const AppNavbar: React.FC<AppNavbarProps> = ({
           </div>
         </div>
       </header>
-
-      {/* Slide-Out Drawer Navigation */}
-      <NavigationDrawer 
-        isOpen={drawerOpen} 
-        onClose={() => setDrawerOpen(false)} 
-      />
     </>
   );
 };

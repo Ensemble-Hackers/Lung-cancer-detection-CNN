@@ -60,14 +60,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             <circle cx="158" cy="168" r="4" fill="#f43f5e" />
           </svg>
         </div>
-        <div className="hero-crosshairs ch-1">+</div>
-        <div className="hero-crosshairs ch-2">+</div>
-        <div className="hero-stacked-meta left-text">
-          <span>E A R L I E R</span>
-          <span>D E T E C T I O N</span>
-          <span>B R I G H T E R</span>
-          <span>T O M O R R O W S</span>
-        </div>
       </div>
 
       {/* Atmospheric Right CT Radiography Art & Stacked Typography */}
@@ -95,14 +87,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             <line x1="150" y1="125" x2="190" y2="125" stroke="#f43f5e" strokeWidth="0.8" strokeOpacity="0.7"/>
             <line x1="170" y1="105" x2="170" y2="145" stroke="#f43f5e" strokeWidth="0.8" strokeOpacity="0.7"/>
           </svg>
-        </div>
-        <div className="hero-crosshairs ch-right">+</div>
-        <div className="hero-stacked-meta right-text">
-          <span>A I</span>
-          <span>F O R</span>
-          <span>L U N G S</span>
-          <span>F O R</span>
-          <span>L I V E S</span>
         </div>
       </div>
 

@@ -41,7 +41,8 @@ export default function Home() {
       </section>
 
       {/* 3. Benchmark Section: Redesigned Pure Light-Theme Model Validation */}
-      <section id="benchmark" className="section-anchor section-light section-benchmark">
+      <section id="benchmarks" className="section-anchor section-light section-benchmark">
+        <span id="benchmark" />
         <div className="section-container">
           <div className="section-header-row">
             <div className="section-title-wrap">

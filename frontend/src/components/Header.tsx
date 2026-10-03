@@ -9,21 +9,19 @@ import {
   ActivityIcon,
   SettingsIcon,
   CheckIcon, 
-  MenuIcon,
-  ChevronDownIcon 
+  ChevronDownIcon,
+  ProbabilityBarsIcon
 } from "@/components/Icons";
 import { ClinicianUser } from "@/types/medical";
 
 interface HeaderProps {
   user: ClinicianUser;
   onOpenAuth: () => void;
-  onOpenDrawer?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({ 
   user, 
-  onOpenAuth,
-  onOpenDrawer 
+  onOpenAuth
 }) => {
   const pathname = usePathname();
   const [isOnline, setIsOnline] = useState(false);
@@ -48,16 +46,6 @@ export const Header: React.FC<HeaderProps> = ({
   return (
     <header className="app-header">
       <div className="header-left">
-        {onOpenDrawer && (
-          <button 
-            className="hamburger-btn" 
-            onClick={onOpenDrawer}
-            title="Open Navigation Menu"
-            aria-label="Navigation Menu"
-          >
-            <MenuIcon size={20} />
-          </button>
-        )}
 
         <Link href="/" className="brand-badge">
           <div className="brand-icon-box">
@@ -90,11 +78,11 @@ export const Header: React.FC<HeaderProps> = ({
           </Link>
 
           <Link 
-            href="/settings" 
-            className={`nav-tab-link ${pathname === "/settings" ? "active" : ""}`}
+            href="/#benchmarks" 
+            className="nav-tab-link"
           >
-            <SettingsIcon size={16} />
-            <span>Settings</span>
+            <ProbabilityBarsIcon size={16} />
+            <span>Benchmarks</span>
           </Link>
         </nav>
       </div>
