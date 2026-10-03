@@ -437,21 +437,22 @@ a {
 }
 
 .right-art {
-  right: max(0px, calc((100vw - 1560px) / 2));
+  right: max(24px, calc((100vw - 1480px) / 2 + 16px));
   top: 15px;
   width: 400px;
   height: 400px;
   pointer-events: auto;
   z-index: 5;
-  transform: translateX(45px);
+  transform: scale(0.92);
+  transform-origin: top right;
 }
 
 @media (max-width: 1440px) {
   .right-art {
     width: 380px;
     height: 380px;
-    right: 0px;
-    transform: translateX(35px) scale(0.92);
+    right: 20px;
+    transform: scale(0.85);
     transform-origin: top right;
   }
 }
@@ -460,8 +461,8 @@ a {
   .right-art {
     width: 340px;
     height: 340px;
-    right: 0px;
-    transform: translateX(20px) scale(0.82);
+    right: 14px;
+    transform: scale(0.78);
     transform-origin: top right;
   }
 }
@@ -751,9 +752,9 @@ a {
 
 .callout-top-right {
   top: 15px;
-  right: -10px;
+  right: 8px;
   text-align: left;
-  transform: rotate(6deg);
+  transform: rotate(4deg);
 }
 
 .callout-bottom-left {
