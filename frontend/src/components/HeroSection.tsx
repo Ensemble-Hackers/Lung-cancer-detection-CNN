@@ -2,6 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
+import { OrbitingLungsShowcase } from "@/components/OrbitingLungsShowcase";
 
 interface HeroSectionProps {
   onGetStarted?: () => void;
@@ -60,50 +61,11 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             <circle cx="158" cy="168" r="4" fill="#f43f5e" />
           </svg>
         </div>
-        <div className="hero-crosshairs ch-1">+</div>
-        <div className="hero-crosshairs ch-2">+</div>
-        <div className="hero-stacked-meta left-text">
-          <span>E A R L I E R</span>
-          <span>D E T E C T I O N</span>
-          <span>B R I G H T E R</span>
-          <span>T O M O R R O W S</span>
-        </div>
       </div>
 
-      {/* Atmospheric Right CT Radiography Art & Stacked Typography */}
-      <div className="hero-side-art right-art" aria-hidden="true">
-        <div className="side-graphic-ct">
-          <svg viewBox="0 0 280 280" fill="none" className="ct-scan-svg">
-            <defs>
-              <radialGradient id="ctGlow" cx="50%" cy="50%" r="50%">
-                <stop offset="0%" stopColor="#0891b2" stopOpacity="0.35" />
-                <stop offset="70%" stopColor="#0e7490" stopOpacity="0.1" />
-                <stop offset="100%" stopColor="#000000" stopOpacity="0" />
-              </radialGradient>
-            </defs>
-            <circle cx="140" cy="140" r="130" fill="url(#ctGlow)" />
-            <circle cx="140" cy="140" r="125" stroke="rgba(255, 255, 255, 0.15)" strokeWidth="1.5" />
-            <circle cx="140" cy="140" r="100" stroke="rgba(56, 189, 248, 0.3)" strokeWidth="1.2" strokeDasharray="4 4"/>
-            <circle cx="140" cy="140" r="75" stroke="rgba(255, 255, 255, 0.1)" strokeWidth="1"/>
-            
-            {/* Lungs Contour Axial Slice */}
-            <path d="M85 140 C85 95 118 85 140 85 C162 85 195 95 195 140 C195 185 162 205 140 205 C118 205 85 185 85 140 Z" fill="rgba(6, 182, 212, 0.08)" stroke="rgba(56, 189, 248, 0.35)" strokeWidth="1.2"/>
-            
-            {/* Malignancy Target Box Indicator */}
-            <rect x="150" y="105" width="40" height="40" fill="rgba(239, 68, 68, 0.1)" stroke="#f43f5e" strokeWidth="1.5"/>
-            <circle cx="170" cy="125" r="7" fill="#f43f5e" fillOpacity="0.75"/>
-            <line x1="150" y1="125" x2="190" y2="125" stroke="#f43f5e" strokeWidth="0.8" strokeOpacity="0.7"/>
-            <line x1="170" y1="105" x2="170" y2="145" stroke="#f43f5e" strokeWidth="0.8" strokeOpacity="0.7"/>
-          </svg>
-        </div>
-        <div className="hero-crosshairs ch-right">+</div>
-        <div className="hero-stacked-meta right-text">
-          <span>A I</span>
-          <span>F O R</span>
-          <span>L U N G S</span>
-          <span>F O R</span>
-          <span>L I V E S</span>
-        </div>
+      {/* Right: Orbiting Lungs Showcase (Continuous Circular Rotation with Static Lungs) */}
+      <div className="hero-side-art right-art">
+        <OrbitingLungsShowcase />
       </div>
 
       {/* Main Headline & Subtitle */}
