@@ -199,12 +199,10 @@ Lung-cancer-detection-CNN/
     ├── train.ipynb                        # Interactive Jupyter Notebook for experiments & EDA
     ├── dataset/                           # 1,000 CT scans (train: 613, valid: 72, test: 315)
     └── models/
-        ├── best_model.weights.h5          # Checkpointed Xception backbone weights
-        ├── efficientnetv2s_best.weights.h5# Checkpointed EfficientNetV2-S backbone weights
-        ├── densenet121_clahe_best.weights.h5 # Checkpointed DenseNet121 + CLAHE weights
-        ├── tri_ensemble_test_confusion_matrix.png # 90.16% Test confusion matrix plot
-        ├── test_individual_scans_grid.png # 4-Case diagnostic comparison grid
-        └── model_tracker.md               # Detailed experiment history and logs
+        ├── trained_lung_cancer_model.h5       # Trained Xception model (ImageNet Transfer Learning)
+        ├── efficientnetv2s_model.h5           # Trained EfficientNetV2-S model (Progressive Learning)
+        ├── densenet121_clahe_model.h5         # Trained DenseNet121 + CLAHE contrast-enhanced model
+        └── model_tracker.md                   # Detailed experiment history and benchmark logs
 ```
 
 ---
@@ -254,9 +252,9 @@ python inference.py my_scan.png
 When you run the command, the script runs the scan through all three backbones with 5-view Test-Time Augmentation and prints:
 
 ```text
-Loading Xception weights from: models/best_model.weights.h5
-Loading EfficientNetV2-S weights from: models/efficientnetv2s_best.weights.h5
-Loading DenseNet121+CLAHE weights from: models/densenet121_clahe_best.weights.h5
+Loading Xception model from: trained_lung_cancer_model.h5
+Loading EfficientNetV2-S model from: efficientnetv2s_model.h5
+Loading DenseNet121+CLAHE model from: densenet121_clahe_model.h5
 
 Analyzing image: my_scan.png
 

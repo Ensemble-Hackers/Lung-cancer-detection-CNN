@@ -14,25 +14,26 @@ By uniting **three diverse convolutional architectures** (**Xception**, **Effici
 
 ## 📑 Table of Contents
 
-- [Overview & Clinical Significance](#-overview--clinical-significance)
-- [The 4 Diagnostic Classes](#-the-4-diagnostic-classes)
-- [Performance Benchmarks & Accuracy Evolution](#-performance-benchmarks--accuracy-evolution)
-- [Confusion Matrix & Clinical Safety Metrics](#-confusion-matrix--clinical-safety-metrics)
-- [Architectural Innovations & Why It Works](#-architectural-innovations--why-it-works)
-  - [1. Two-Stage Transfer Learning](#1-two-stage-transfer-learning)
-  - [2. CLAHE (Contrast-Limited Adaptive Histogram Equalization)](#2-clahe-contrast-limited-adaptive-histogram-equalization)
-  - [3. Multi-Backbone Tri-Ensemble Fusion](#3-multi-backbone-tri-ensemble-fusion)
-  - [4. 5-View Test-Time Augmentation (TTA)](#4-5-view-test-time-augmentation-tta)
-- [Project Structure](#-project-structure)
-- [Environment Setup & Installation](#-environment-setup--installation)
-  - [Troubleshooting Common Setup Gotchas](#troubleshooting-common-setup-gotchas)
-- [How to Test Any CT Scan (Inference)](#-how-to-test-any-ct-scan-inference)
-- [How to Run Training & Full Evaluation](#-how-to-run-training--full-evaluation)
-- [Hyperparameters & Training Specifications](#-hyperparameters--training-specifications)
-- [Acknowledgements & Dataset Citation](#-acknowledgements--dataset-citation)
+- [Overview & Clinical Significance](#overview)
+- [The 4 Diagnostic Classes](#diagnostic-classes)
+- [Performance Benchmarks & Accuracy Evolution](#benchmarks)
+- [Confusion Matrix & Clinical Safety Metrics](#confusion-matrix)
+- [Architectural Innovations & Why It Works](#architectural-innovations)
+  - [1. Two-Stage Transfer Learning](#transfer-learning)
+  - [2. CLAHE (Contrast-Limited Adaptive Histogram Equalization)](#clahe)
+  - [3. Multi-Backbone Tri-Ensemble Fusion](#tri-ensemble)
+  - [4. 5-View Test-Time Augmentation (TTA)](#tta)
+- [Project Structure](#project-structure)
+- [Environment Setup & Installation](#environment-setup)
+  - [Troubleshooting Common Setup Gotchas](#troubleshooting)
+- [How to Test Any CT Scan (Inference)](#inference)
+- [How to Run Training & Full Evaluation](#training-and-evaluation)
+- [Hyperparameters & Training Specifications](#hyperparameters)
+- [Acknowledgements & Dataset Citation](#acknowledgements)
 
 ---
 
+<a id="overview"></a>
 ## 🎯 Overview & Clinical Significance
 
 Lung cancer remains the leading cause of cancer mortality worldwide. The vast majority of early-stage pulmonary nodules are asymptomatic; thus, high-resolution chest Computed Tomography (CT) is the clinical gold standard for detection. 
@@ -46,6 +47,7 @@ This project delivers a clinically reliable diagnostic tool that **eliminates fa
 
 ---
 
+<a id="diagnostic-classes"></a>
 ## 🔬 The 4 Diagnostic Classes
 
 The model classifies every input axial scan into one of four mutually exclusive clinical categories:
@@ -59,6 +61,7 @@ The model classifies every input axial scan into one of four mutually exclusive 
 
 ---
 
+<a id="benchmarks"></a>
 ## 📊 Performance Benchmarks & Accuracy Evolution
 
 The Kaggle benchmark test set comprises **315 chest CT scans from independent patients** (completely isolated from training patients). Here is how systematic architectural upgrades elevated performance from baseline to state-of-the-art:
@@ -76,9 +79,10 @@ The Kaggle benchmark test set comprises **315 chest CT scans from independent pa
 
 ---
 
+<a id="confusion-matrix"></a>
 ## 📈 Confusion Matrix & Clinical Safety Metrics
 
-Evaluating all 315 unseen patient scans produced the following confusion matrix (saved in [`Lung-cancer-model-train/models/tri_ensemble_test_confusion_matrix.png`](Lung-cancer-model-train/models/tri_ensemble_test_confusion_matrix.png)):
+Evaluating all 315 unseen patient scans produced the following confusion matrix (tracked in [`Lung-cancer-model-train/models/model_tracker.md`](Lung-cancer-model-train/models/model_tracker.md)):
 
 ```
                         Predicted
@@ -110,6 +114,7 @@ Precision:          90.43%  88.00% 100.00%   85.57%    |  Overall Acc: 90.16%
 
 ---
 
+<a id="architectural-innovations"></a>
 ## 🧠 Architectural Innovations & Why It Works
 
 ```
@@ -135,19 +140,23 @@ Precision:          90.43%  88.00% 100.00%   85.57%    |  Overall Acc: 90.16%
                          [ Diagnosis + Confidence Chart ]
 ```
 
+<a id="transfer-learning"></a>
 ### 1. Two-Stage Transfer Learning
 * **Stage 1 (Head Adaptation)**: Freeze the pretrained ImageNet backbone. Train only `GlobalAveragePooling2D` $\rightarrow$ `BatchNormalization` $\rightarrow$ `Dense(256, ReLU)` $\rightarrow$ `Dropout(0.4)` $\rightarrow$ `Dense(4, Softmax)` at $\text{LR} = 10^{-3}$.
 * **Stage 2 (Backbone Fine-Tuning)**: Unfreeze top layers at $\text{LR} = 10^{-5}$ with progressive learning rate decay (`ReduceLROnPlateau`), adapting high-level spatial receptive fields to radiographic features.
 
+<a id="clahe"></a>
 ### 2. CLAHE (Contrast-Limited Adaptive Histogram Equalization)
 Standard 8-bit PNG exports of CT scans suffer from low local soft-tissue contrast. We transform the image to **LAB color space**, apply CLAHE specifically to the **L (Luminance) channel** with a clip limit of 2.0 and an $8 \times 8$ tile grid, and convert back to RGB. This amplifies faint ground-glass margins, spiculation borders, and vascular attachments.
 
+<a id="tri-ensemble"></a>
 ### 3. Multi-Backbone Tri-Ensemble Fusion
 Different CNN architectures possess distinct inductive biases:
 * **Xception** (10% weight): Uses depthwise separable convolutions to decouple cross-channel correlations from spatial spatial correlations.
 * **EfficientNetV2-S** (30% weight): Uses progressive regularized multi-scale receptive fields to capture both macroscopic lobe anatomy and localized lesions.
 * **DenseNet121 + CLAHE** (60% weight): Re-connects every layer directly to all subsequent layers. By concatenating feature maps, low-level radiographic textures are preserved through the network without signal loss.
 
+<a id="tta"></a>
 ### 4. 5-View Test-Time Augmentation (TTA)
 During inference, each input scan generates 5 distinct perspectives:
 1. `Original`: Raw scan
@@ -160,6 +169,7 @@ The predictions across all 5 views and all 3 models are averaged, virtually elim
 
 ---
 
+<a id="project-structure"></a>
 ## 📂 Project Structure
 
 ```text
@@ -183,16 +193,15 @@ Lung-cancer-detection-CNN/
     │   ├── valid/                         # Validation images (72 scans across 4 classes)
     │   └── test/                          # Holdout testing images (315 unseen patient scans)
     └── models/
-        ├── best_model.weights.h5          # Xception trained backbone weights (85.9 MB)
-        ├── efficientnetv2s_best.weights.h5# EfficientNetV2-S trained backbone weights (83.8 MB)
-        ├── densenet121_clahe_best.weights.h5 # DenseNet121 + CLAHE trained backbone weights (30.2 MB)
-        ├── tri_ensemble_test_confusion_matrix.png # 90.16% Test accuracy confusion matrix
-        ├── test_individual_scans_grid.png # 4-Case diagnostic comparison grid
-        └── model_tracker.md               # Complete experiment log and performance benchmarks
+        ├── trained_lung_cancer_model.h5       # Xception trained complete model (161.8 MB)
+        ├── efficientnetv2s_model.h5           # EfficientNetV2-S trained complete model (105.5 MB)
+        ├── densenet121_clahe_model.h5         # DenseNet121 + CLAHE trained complete model (38.0 MB)
+        └── model_tracker.md                   # Complete experiment log and performance benchmarks
 ```
 
 ---
 
+<a id="environment-setup"></a>
 ## ⚙️ Environment Setup & Installation
 
 ### Prerequisites
@@ -203,7 +212,7 @@ Lung-cancer-detection-CNN/
 
 ```powershell
 # 1. Clone the repository
-git clone https://github.com/Stellar-merge/Lung-cancer-detection-CNN.git
+git clone https://github.com/Ensemble-Hackers/Lung-cancer-detection-CNN.git
 cd Lung-cancer-detection-CNN
 
 # 2. Create and activate a Python 3.10 environment
@@ -218,7 +227,7 @@ pip install tensorflow==2.10.0 opencv-python matplotlib scikit-learn
 
 ```bash
 # 1. Clone and enter directory
-git clone https://github.com/Stellar-merge/Lung-cancer-detection-CNN.git
+git clone https://github.com/Ensemble-Hackers/Lung-cancer-detection-CNN.git
 cd Lung-cancer-detection-CNN
 
 # 2. Sync all locked dependencies into a virtual environment
@@ -227,6 +236,7 @@ uv sync
 
 ---
 
+<a id="troubleshooting"></a>
 ### Troubleshooting Common Setup Gotchas
 
 #### ❓ Error: `ModuleNotFoundError: No module named 'tensorflow'`
@@ -247,6 +257,7 @@ uv sync
 
 ---
 
+<a id="inference"></a>
 ## 🩺 How to Test Any CT Scan (Inference)
 
 ### 1. Automatic Detection in Project Root
@@ -267,9 +278,9 @@ python inference.py "C:\path\to\patient_scan.png"
 ### Sample Output
 
 ```text
-Loading Xception weights from: models/best_model.weights.h5
-Loading EfficientNetV2-S weights from: models/efficientnetv2s_best.weights.h5
-Loading DenseNet121+CLAHE weights from: models/densenet121_clahe_best.weights.h5
+Loading Xception model from: trained_lung_cancer_model.h5
+Loading EfficientNetV2-S model from: efficientnetv2s_model.h5
+Loading DenseNet121+CLAHE model from: densenet121_clahe_model.h5
 
 Analyzing image: test.jpg
 
@@ -291,6 +302,7 @@ A visual diagnostic chart with the CT scan on the left and confidence bar chart 
 
 ---
 
+<a id="training-and-evaluation"></a>
 ## 🚀 How to Run Training & Full Evaluation
 
 ### 1. Re-Evaluate the 90.16% Benchmark (315 Test Scans)
@@ -320,6 +332,7 @@ Open `Lung-cancer-model-train/train.ipynb` in VS Code, Cursor, or Jupyter Lab to
 
 ---
 
+<a id="hyperparameters"></a>
 ## ⚙️ Hyperparameters & Training Specifications
 
 | Parameter | Stage 1 (Head Training) | Stage 2 (Fine-Tuning) |
@@ -335,6 +348,7 @@ Open `Lung-cancer-model-train/train.ipynb` in VS Code, Cursor, or Jupyter Lab to
 
 ---
 
+<a id="acknowledgements"></a>
 ## 🏆 Acknowledgements & Dataset Citation
 
 * **Dataset**: [Chest CT-Scan Images Dataset](https://www.kaggle.com/datasets/mohamedhanyyy/chest-ctscan-images) by Mohamed Hany on Kaggle.

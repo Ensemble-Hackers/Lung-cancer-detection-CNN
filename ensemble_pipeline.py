@@ -45,6 +45,10 @@ REPO_ROOT = Path(__file__).resolve().parent
 TEST_DIR = REPO_ROOT / "Lung-cancer-model-train" / "dataset" / "test"
 MODELS_DIR = REPO_ROOT / "Lung-cancer-model-train" / "models"
 
+XCEPTION_MODEL_PATH = MODELS_DIR / "trained_lung_cancer_model.h5"
+EFFICIENTNET_MODEL_PATH = MODELS_DIR / "efficientnetv2s_model.h5"
+DENSENET_MODEL_PATH = MODELS_DIR / "densenet121_clahe_model.h5"
+
 XCEPTION_WEIGHTS = MODELS_DIR / "best_model.weights.h5"
 EFFICIENTNET_WEIGHTS = MODELS_DIR / "efficientnetv2s_best.weights.h5"
 DENSENET_WEIGHTS = MODELS_DIR / "densenet121_clahe_best.weights.h5"
@@ -67,31 +71,29 @@ def build_head(backbone_output, num_classes=len(CLASSES)):
     return Dense(num_classes, activation="softmax")(x)
 
 
+def load_or_build_model(model_path, weights_path, backbone_fn):
+    target = model_path if model_path.exists() else weights_path
+    try:
+        return tf.keras.models.load_model(str(target), compile=False)
+    except Exception:
+        inputs = Input(shape=(*IMAGE_SIZE, 3))
+        backbone = backbone_fn(weights=None, include_top=False, input_tensor=inputs)
+        outputs = build_head(backbone.output)
+        model = Model(inputs=inputs, outputs=outputs)
+        model.load_weights(str(target))
+        return model
+
+
 def build_xception():
-    inputs = Input(shape=(*IMAGE_SIZE, 3))
-    backbone = Xception(weights=None, include_top=False, input_tensor=inputs)
-    outputs = build_head(backbone.output)
-    model = Model(inputs=inputs, outputs=outputs)
-    model.load_weights(str(XCEPTION_WEIGHTS))
-    return model
+    return load_or_build_model(XCEPTION_MODEL_PATH, XCEPTION_WEIGHTS, Xception)
 
 
 def build_efficientnet():
-    inputs = Input(shape=(*IMAGE_SIZE, 3))
-    backbone = EfficientNetV2S(weights=None, include_top=False, input_tensor=inputs)
-    outputs = build_head(backbone.output)
-    model = Model(inputs=inputs, outputs=outputs)
-    model.load_weights(str(EFFICIENTNET_WEIGHTS))
-    return model
+    return load_or_build_model(EFFICIENTNET_MODEL_PATH, EFFICIENTNET_WEIGHTS, EfficientNetV2S)
 
 
 def build_densenet():
-    inputs = Input(shape=(*IMAGE_SIZE, 3))
-    backbone = DenseNet121(weights=None, include_top=False, input_tensor=inputs)
-    outputs = build_head(backbone.output)
-    model = Model(inputs=inputs, outputs=outputs)
-    model.load_weights(str(DENSENET_WEIGHTS))
-    return model
+    return load_or_build_model(DENSENET_MODEL_PATH, DENSENET_WEIGHTS, DenseNet121)
 
 
 def clahe_preprocess_batch(X_raw):
