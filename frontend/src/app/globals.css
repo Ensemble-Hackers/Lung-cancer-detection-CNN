@@ -437,9 +437,304 @@ a {
 }
 
 .right-art {
-  right: 20px;
-  top: 40px;
-  width: 240px;
+  right: max(16px, calc((100vw - 1460px) / 2 + 16px));
+  top: 20px;
+  width: 400px;
+  height: 400px;
+  pointer-events: auto;
+  z-index: 5;
+}
+
+@media (max-width: 1380px) {
+  .right-art {
+    width: 340px;
+    height: 340px;
+    right: 8px;
+    transform: scale(0.85);
+    transform-origin: top right;
+  }
+}
+
+/* ==========================================================================
+   ORBITING LUNGS CLINICAL SHOWCASE (Continuous Orbit with Static Lungs)
+   ========================================================================== */
+
+.orbit-showcase-wrapper {
+  position: relative;
+  width: 400px;
+  height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+}
+
+/* Background Atmospheric Rings Layer */
+.orbit-rings-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.orbit-ring {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.orbit-ring.ring-outer {
+  width: 350px;
+  height: 350px;
+  border: 1px dashed rgba(56, 189, 248, 0.28);
+}
+
+.orbit-ring.ring-mid {
+  width: 280px;
+  height: 280px;
+  border: 1.5px dashed rgba(2, 132, 199, 0.32);
+}
+
+.orbit-center-glow {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(186, 230, 253, 0.5) 0%, rgba(224, 242, 254, 0.25) 55%, transparent 75%);
+  border: 1.5px solid rgba(56, 189, 248, 0.3);
+  box-shadow: 0 0 35px rgba(56, 189, 248, 0.15);
+}
+
+/* Ambient Sparkles */
+.orbit-sparkle {
+  position: absolute;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  pointer-events: none;
+  animation: sparkle-twinkle 4s ease-in-out infinite;
+}
+
+.orbit-sparkle.sp-1 { top: 40px; right: 110px; font-size: 13px; color: #0284c7; opacity: 0.65; animation-delay: 0.5s; }
+.orbit-sparkle.sp-2 { top: 90px; left: 55px; font-size: 15px; color: #f59e0b; opacity: 0.8; animation-delay: 1.2s; }
+.orbit-sparkle.sp-3 { bottom: 90px; right: 65px; font-size: 14px; color: #0284c7; opacity: 0.6; animation-delay: 2s; }
+.orbit-sparkle.sp-4 { bottom: 20px; left: 105px; font-size: 14px; color: #0284c7; opacity: 0.55; animation-delay: 0.8s; }
+.orbit-sparkle.sp-5 { top: 105px; right: 75px; font-size: 12px; color: #0284c7; opacity: 0.5; animation-delay: 1.8s; }
+
+@keyframes sparkle-twinkle {
+  0%, 100% { opacity: 0.4; transform: scale(0.9); }
+  50% { opacity: 0.95; transform: scale(1.15); }
+}
+
+/* Orbital Guide Satellite Dots */
+.orbit-dot {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #38bdf8;
+  box-shadow: 0 0 8px #38bdf8;
+  pointer-events: none;
+}
+
+.orbit-dot.dot-1 { top: 60px; left: 110px; }
+.orbit-dot.dot-2 { top: 90px; right: 125px; }
+.orbit-dot.dot-3 { bottom: 110px; left: 95px; }
+.orbit-dot.dot-4 { bottom: 55px; right: 195px; }
+
+/* STATIC CENTRAL LUNGS */
+.orbit-center-lungs {
+  position: absolute;
+  width: 145px;
+  height: 145px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 6;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.orbit-lungs-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 16px rgba(14, 165, 233, 0.45));
+  animation: lungs-subtle-breathe 5s ease-in-out infinite;
+}
+
+@keyframes lungs-subtle-breathe {
+  0%, 100% {
+    transform: scale(1);
+    filter: drop-shadow(0 4px 14px rgba(14, 165, 233, 0.4));
+  }
+  50% {
+    transform: scale(1.035);
+    filter: drop-shadow(0 6px 20px rgba(6, 182, 212, 0.6));
+  }
+}
+
+/* ROTATING RING CONTAINER */
+.orbit-rotating-ring {
+  position: absolute;
+  width: 400px;
+  height: 400px;
+  top: 0;
+  left: 0;
+  z-index: 8;
+  animation: orbitRingSpin 30s linear infinite;
+  transform-origin: 200px 200px;
+}
+
+.orbit-showcase-wrapper:hover .orbit-rotating-ring {
+  animation-play-state: paused;
+}
+
+.orbit-showcase-wrapper:hover .orbit-card-content {
+  animation-play-state: paused;
+}
+
+@keyframes orbitRingSpin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* CARD SLOTS (Equidistant on R = 140px, center = 200px) */
+.orbit-card-slot {
+  position: absolute;
+  transform: translate(-50%, -50%);
+}
+
+.slot-top {
+  left: 200px;
+  top: 55px;
+}
+
+.slot-top-right {
+  left: 338px;
+  top: 155px;
+}
+
+.slot-bottom-right {
+  left: 285px;
+  top: 315px;
+}
+
+.slot-bottom-left {
+  left: 115px;
+  top: 315px;
+}
+
+.slot-top-left {
+  left: 62px;
+  top: 155px;
+}
+
+/* CARD CONTENT (Counter-rotates so it stays completely upright and level) */
+.orbit-card-content {
+  background: #ffffff;
+  border: 1px solid rgba(186, 230, 253, 0.85);
+  box-shadow: 0 8px 24px -4px rgba(14, 165, 233, 0.16), 0 2px 6px rgba(15, 23, 42, 0.04);
+  border-radius: 12px;
+  padding: 6px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  animation: orbitCardCounter 30s linear infinite;
+  transform-origin: center center;
+  cursor: pointer;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.orbit-card-content:hover {
+  border-color: #0284c7;
+  box-shadow: 0 12px 28px -4px rgba(14, 165, 233, 0.32), 0 0 0 2px rgba(56, 189, 248, 0.35);
+  transform: scale(1.05);
+}
+
+@keyframes orbitCardCounter {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+.orbit-card-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  border: 1px solid rgba(186, 230, 253, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.orbit-card-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+}
+
+.orbit-card-text .card-title {
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 750;
+  color: #0f172a;
+}
+
+.orbit-card-text .card-subtitle {
+  font-family: var(--font-sans);
+  font-size: 10px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+/* Callout Text & Arrows */
+.orbit-callout {
+  position: absolute;
+  z-index: 10;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.orbit-callout .callout-text {
+  font-family: var(--font-sans);
+  font-size: 10.5px;
+  line-height: 1.25;
+  font-weight: 650;
+  color: #64748b;
+  letter-spacing: -0.01em;
+}
+
+.callout-top-right {
+  top: 15px;
+  right: -10px;
+  text-align: left;
+  transform: rotate(6deg);
+}
+
+.callout-bottom-left {
+  bottom: 25px;
+  left: -20px;
+  text-align: left;
+  transform: rotate(-4deg);
+}
+
+.callout-arrow {
+  opacity: 0.7;
 }
 
 .lungs-xray-svg, .ct-scan-svg {
@@ -458,28 +753,6 @@ a {
 
 .hero-crosshairs.ch-1 { top: 120px; right: 20px; }
 .hero-crosshairs.ch-2 { bottom: 60px; left: 30px; }
-
-.hero-stacked-meta {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 0.38em;
-  color: #7b95a5;
-  font-weight: 600;
-  margin-top: 14px;
-  opacity: 0.85;
-}
-
-.hero-stacked-meta.left-text {
-  text-align: left;
-}
-
-.hero-stacked-meta.right-text {
-  text-align: left;
-  color: #8da4b3;
-}
 
 @media (max-width: 1120px) {
   .hero-side-art {
