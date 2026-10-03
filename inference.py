@@ -50,6 +50,10 @@ CLASSES = [
 
 REPO_ROOT = Path(__file__).resolve().parent
 MODELS_DIR = REPO_ROOT / "Lung-cancer-model-train" / "models"
+XCEPTION_MODEL_PATH = MODELS_DIR / "trained_lung_cancer_model.h5"
+EFFICIENTNET_MODEL_PATH = MODELS_DIR / "efficientnetv2s_model.h5"
+DENSENET_MODEL_PATH = MODELS_DIR / "densenet121_clahe_model.h5"
+
 XCEPTION_WEIGHTS = MODELS_DIR / "best_model.weights.h5"
 EFFICIENTNET_WEIGHTS = MODELS_DIR / "efficientnetv2s_best.weights.h5"
 DENSENET_WEIGHTS = MODELS_DIR / "densenet121_clahe_best.weights.h5"
@@ -63,37 +67,46 @@ def build_head(backbone_output, num_classes=len(CLASSES)):
     return Dense(num_classes, activation="softmax")(x)
 
 
+def load_single_model(model_path, weights_fallback_path, backbone_fn, inputs, name):
+    target = None
+    if model_path.exists():
+        target = model_path
+    elif weights_fallback_path and weights_fallback_path.exists():
+        target = weights_fallback_path
+
+    if target is None:
+        return None
+
+    print(f"Loading {name} model from: {target.name}")
+    try:
+        return tf.keras.models.load_model(str(target), compile=False)
+    except Exception:
+        bb = backbone_fn(weights=None, include_top=False, input_tensor=inputs)
+        out = build_head(bb.output)
+        m = Model(inputs=inputs, outputs=out)
+        m.load_weights(str(target))
+        return m
+
+
 def load_ensemble():
     """Loads available models (Xception, EfficientNetV2-S, DenseNet121+CLAHE)."""
     models = {}
     inputs = Input(shape=(*IMAGE_SIZE, 3))
 
-    if XCEPTION_WEIGHTS.exists():
-        print(f"Loading Xception weights from: {XCEPTION_WEIGHTS}")
-        bb_xc = Xception(weights=None, include_top=False, input_tensor=inputs)
-        out_xc = build_head(bb_xc.output)
-        m_xc = Model(inputs=inputs, outputs=out_xc)
-        m_xc.load_weights(str(XCEPTION_WEIGHTS))
+    m_xc = load_single_model(XCEPTION_MODEL_PATH, XCEPTION_WEIGHTS, Xception, inputs, "Xception")
+    if m_xc is not None:
         models["xception"] = m_xc
 
-    if EFFICIENTNET_WEIGHTS.exists():
-        print(f"Loading EfficientNetV2-S weights from: {EFFICIENTNET_WEIGHTS}")
-        bb_eff = EfficientNetV2S(weights=None, include_top=False, input_tensor=inputs)
-        out_eff = build_head(bb_eff.output)
-        m_eff = Model(inputs=inputs, outputs=out_eff)
-        m_eff.load_weights(str(EFFICIENTNET_WEIGHTS))
+    m_eff = load_single_model(EFFICIENTNET_MODEL_PATH, EFFICIENTNET_WEIGHTS, EfficientNetV2S, inputs, "EfficientNetV2-S")
+    if m_eff is not None:
         models["efficientnet"] = m_eff
 
-    if DENSENET_WEIGHTS.exists():
-        print(f"Loading DenseNet121+CLAHE weights from: {DENSENET_WEIGHTS}")
-        bb_dense = DenseNet121(weights=None, include_top=False, input_tensor=inputs)
-        out_dense = build_head(bb_dense.output)
-        m_dense = Model(inputs=inputs, outputs=out_dense)
-        m_dense.load_weights(str(DENSENET_WEIGHTS))
+    m_dense = load_single_model(DENSENET_MODEL_PATH, DENSENET_WEIGHTS, DenseNet121, inputs, "DenseNet121+CLAHE")
+    if m_dense is not None:
         models["densenet"] = m_dense
 
     if not models:
-        print("\n[Error] No trained weights found in models directory!")
+        print("\n[Error] No trained models found in models directory!")
         sys.exit(1)
 
     return models
