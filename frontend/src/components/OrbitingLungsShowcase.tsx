@@ -30,10 +30,72 @@ export const OrbitingLungsShowcase: React.FC = () => {
 
       {/* STATIC CENTRAL LUNGS (Stationary - Does NOT Rotate) */}
       <div className="orbit-center-lungs">
+        {/* Instant High-Definition Vector Lungs (Zero latency, never breaks) */}
+        <div className="orbit-lungs-vector-wrap">
+          <svg viewBox="0 0 160 160" fill="none" className="orbit-lungs-svg">
+            <defs>
+              <radialGradient id="orbitLungsCenterGlow" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stopColor="#38bdf8" stopOpacity="0.45" />
+                <stop offset="60%" stopColor="#0284c7" stopOpacity="0.15" />
+                <stop offset="100%" stopColor="#0284c7" stopOpacity="0" />
+              </radialGradient>
+              <linearGradient id="lungLeftGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#bae6fd" stopOpacity="0.9" />
+                <stop offset="45%" stopColor="#38bdf8" stopOpacity="0.75" />
+                <stop offset="100%" stopColor="#0284c7" stopOpacity="0.5" />
+              </linearGradient>
+              <linearGradient id="lungRightGrad" x1="100%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#bae6fd" stopOpacity="0.9" />
+                <stop offset="45%" stopColor="#38bdf8" stopOpacity="0.75" />
+                <stop offset="100%" stopColor="#0284c7" stopOpacity="0.5" />
+              </linearGradient>
+              <linearGradient id="tracheaGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#e0f2fe" stopOpacity="0.95" />
+                <stop offset="100%" stopColor="#38bdf8" stopOpacity="0.8" />
+              </linearGradient>
+            </defs>
+
+            {/* Ambient Pulmonary Glow Core */}
+            <circle cx="80" cy="88" r="54" fill="url(#orbitLungsCenterGlow)" />
+
+            {/* Trachea & Primary Bronchial Tree */}
+            <path d="M80 18 L80 64 M80 64 L62 90 M80 64 L98 90 M62 90 L48 114 M62 90 L70 112 M98 90 L112 114 M98 90 L90 112" 
+              stroke="url(#tracheaGrad)" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" />
+
+            {/* Tracheal Cartilage Rings */}
+            <line x1="74" y1="24" x2="86" y2="24" stroke="#e0f2fe" strokeWidth="1.6" strokeLinecap="round" opacity="0.9" />
+            <line x1="74" y1="31" x2="86" y2="31" stroke="#e0f2fe" strokeWidth="1.6" strokeLinecap="round" opacity="0.9" />
+            <line x1="74" y1="38" x2="86" y2="38" stroke="#e0f2fe" strokeWidth="1.6" strokeLinecap="round" opacity="0.9" />
+            <line x1="74" y1="45" x2="86" y2="45" stroke="#e0f2fe" strokeWidth="1.6" strokeLinecap="round" opacity="0.9" />
+            <line x1="75" y1="52" x2="85" y2="52" stroke="#e0f2fe" strokeWidth="1.6" strokeLinecap="round" opacity="0.9" />
+
+            {/* Left Pulmonary Lobe (Anatomical Margin) */}
+            <path d="M72 44 C60 48 30 70 28 108 C26 138 48 152 68 142 C78 138 78 116 76 86 Z" 
+              fill="url(#lungLeftGrad)" stroke="#38bdf8" strokeWidth="1.6" />
+            
+            {/* Right Pulmonary Lobe (Anatomical Margin) */}
+            <path d="M88 44 C100 48 130 70 132 108 C134 138 112 152 92 142 C82 138 82 116 84 86 Z" 
+              fill="url(#lungRightGrad)" stroke="#38bdf8" strokeWidth="1.6" />
+
+            {/* Micro Bronchial Arbors & Vascular Trees */}
+            <path d="M48 114 L38 126 M48 114 L52 130 M70 112 L66 128 M112 114 L122 126 M112 114 L108 130 M90 112 L94 128" 
+              stroke="#e0f2fe" strokeWidth="1.8" strokeLinecap="round" opacity="0.85" />
+
+            {/* Sub-alveolar Shimmer Nodes */}
+            <circle cx="50" cy="100" r="2.2" fill="#bae6fd" opacity="0.9" />
+            <circle cx="110" cy="100" r="2.2" fill="#bae6fd" opacity="0.9" />
+            <circle cx="62" cy="125" r="1.8" fill="#bae6fd" opacity="0.8" />
+            <circle cx="98" cy="125" r="1.8" fill="#bae6fd" opacity="0.8" />
+          </svg>
+        </div>
+
+        {/* 3D Photorealistic Glassmorphic Lungs Texture Overlay */}
         <img 
           src="/lungs_bg.png" 
           alt="Thoracic Lung Anatomy" 
           className="orbit-lungs-image" 
+          loading="eager"
+          decoding="async"
         />
         <div className="orbit-lungs-breath-glow" />
       </div>
